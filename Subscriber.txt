@@ -1,0 +1,29 @@
+import rospy
+from std_msgs.msg import Int32
+from smbus import SMBus
+addr = 0x8 # MEGA address
+addr = 0x9 # UNO address
+bus = SMBus(1) # indicates /dev/ic2-1
+
+def callback(msg):
+    if msg.data == 11:
+       bus.write_byte(addr, 11)
+       bus.write_byte(addr2, 11)
+    elif msg.data == 12:
+         bus.write_byte(addr, 12)
+         bus.write_byte(addr2, 12) 
+    elif msg.data == 21:
+         bus.write_byte(addr, 21)
+         bus.write_byte(addr2, 21) 
+    elif msg.data == 22:
+         bus.write_byte(addr, 22)
+         bus.write_byte(addr2, 22) 
+    elif msg.data == 31:
+         bus.write_byte(addr, 31)
+         bus.write_byte(addr2, 31) 
+    elif msg.data == 32:
+         bus.write_byte(addr, 32)
+         bus.write_byte(addr2, 32) # switch it on
+rospy.init_node('Library_subscriber')
+sub = rospy.Subscriber('Library', Int32 , callback)
+rospy.spin()

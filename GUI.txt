@@ -1,0 +1,145 @@
+import sys
+import socket
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QToolButton
+from PyQt5.QtCore import QTimer
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Raspberry Pi Connection")
+        self.resize(400, 400)  # Set window size
+        self.new_window = None  # Reference to the new window instance
+        
+        layout = QVBoxLayout()
+        
+        button1 = QToolButton(self)
+        button1.setText("Start")
+        button1.setStyleSheet("background-color: green; color: white;")  # Set button background color and text color
+        button1.setGeometry(150, 100, 100, 50)
+        button1.clicked.connect(self.open_new_window)
+        layout.addWidget(button1)
+        
+        button2 = QToolButton(self)
+        button2.setText("Stop")
+        button2.setStyleSheet("background-color: red; color: white;")  # Set button background color and text color
+        button2.setGeometry(150, 250, 100, 50)
+        button2.clicked.connect(self.stop)
+        layout.addWidget(button2)
+
+        self.host = '172.20.10.2'  # Raspberry Pi IP address
+        self.port = 55000  # Port number for communication
+        self.socket = None
+
+    def connect_to_raspberry_pi(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((self.host, self.port))
+        print("Connected to Raspberry Pi")
+        self.socket.sendall(b"start")  # Send a start message to Raspberry Pi
+        print("Start message sent to Raspberry Pi")
+
+    def open_new_window(self):
+        if not self.new_window:  # Create a new window only if it doesn't exist
+            self.new_window = NewWindow()
+            self.new_window.show()
+        
+    def stop(self):
+        if not self.socket:
+            self.connect_to_raspberry_pi()
+        print("Connected to Raspberry Pi")
+
+        self.socket.sendall(b"stop")  # Send a stop message to Raspberry Pi
+        print("Stop message sent to Raspberry Pi")
+        self.socket.close()
+        self.close()
+        sys.exit(app.exec_())
+
+class NewWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("New Window")
+        self.resize(700, 400)
+
+        layout = QVBoxLayout()
+
+        math1 = QToolButton(self)
+        math1.setText("Math 1")
+        math1.setStyleSheet("background-color: blue; color: white;")  # Set button background color and text color
+        layout.addWidget(math1)
+        math1.setGeometry(100, 100, 100, 50)
+        math1.clicked.connect(lambda: self.send_integer_message(11))
+
+        math2 = QToolButton(self)
+        math2.setText("Math 2")
+        math2.setStyleSheet("background-color: blue; color: white;")  # Set button background color and text color
+        layout.addWidget(math2)
+        math2.setGeometry(100, 250, 100, 50)
+        math2.clicked.connect(lambda: self.send_integer_message(12))
+
+        bio1 = QToolButton(self)
+        bio1.setText("BIO 1")
+        bio1.setStyleSheet("background-color: blue; color: white;")  # Set button background color and text color
+        layout.addWidget(bio1)
+        bio1.setGeometry(250, 100, 100, 50)
+        bio1.clicked.connect(lambda: self.send_integer_message(21))
+
+        bio2 = QToolButton(self)
+        bio2.setText("BIO 2")
+        bio2.setStyleSheet("background-color: blue; color: white;")  # Set button background color and text color
+        layout.addWidget(bio2)
+        bio2.setGeometry(250, 250, 100, 50)
+        bio2.clicked.connect(lambda: self.send_integer_message(22))
+
+        geography1 = QToolButton(self)
+        geography1.setText("Geography 1")
+        geography1.setStyleSheet("background-color: blue; color: white;")  # Set button background color and text color
+        layout.addWidget(geography1)
+        geography1.setGeometry(400, 100, 100, 50)
+        geography1.clicked.connect(lambda: self.send_integer_message(31))
+
+        geography2 = QToolButton(self)
+        geography2.setText("Geography 2")
+        geography2.setStyleSheet("background-color: blue; color: white;")  # Set button background color and text color
+        layout.addWidget(geography2)
+        geography2.setGeometry(400, 250, 100, 50)
+        geography2.clicked.connect(lambda: self.send_integer_message(32))
+
+        button3 = QToolButton(self)
+        button3.setText("Stop")
+        button3.setStyleSheet("background-color: red; color: white;")  # Set button background color and text color
+        button3.setGeometry(550, 175, 100, 50)
+        button3.clicked.connect(lambda: self.send_integer_message(7))
+        layout.addWidget(button3)
+
+        self.host = '172.20.10.2'  # Raspberry Pi IP address
+        self.port = 55000  # Port number for communication
+        self.socket = None
+
+    def connect_to_raspberry_pi(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((self.host, self.port))
+        print("Connected to Raspberry Pi")
+
+    def send_integer_message(self, value):
+        if not self.socket:
+            self.connect_to_raspberry_pi()
+        print("Connected to Raspberry Pi")
+
+        self.socket.sendall(str(value).encode())  # Send an integer value to Raspberry Pi
+        print(f"Message sent to Raspberry Pi: {value}")
+
+    def stop(self):
+        if not self.socket:
+            self.connect_to_raspberry_pi()
+        print("Connected to Raspberry Pi")
+
+        self.socket.sendall(b"stop")  # Send a stop message to Raspberry Pi
+        print("Stop message sent to Raspberry Pi")
+        self.socket.close()
+        self.close()
+        sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
